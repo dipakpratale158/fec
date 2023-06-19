@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAllProductsAsync, selectAllProducts } from '../productSlice';
+import { fetchAllProductsAsync, fetchProductsByFiltersAsync, selectAllProducts } from '../productSlice';
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { ChevronLeftIcon, ChevronRightIcon , StarIcon} from '@heroicons/react/20/solid'
@@ -229,9 +229,14 @@ export default function ProductList() {
   const dispatch = useDispatch();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 const products=useSelector(selectAllProducts)
+const [filter,setFilter]=useState({})
+
+
+
 
 const handleFilter = (e, section, option) => {
   //dont use preventdefault hear not reloading hear
+  //
   const newFilter = { ...filter, [section.id]: option.value };
   setFilter(newFilter);
   dispatch(fetchProductsByFiltersAsync(newFilter));
@@ -337,7 +342,8 @@ useEffect(()=>{
                                       defaultChecked={option.checked}
                                       onChange={(e) =>
                                         handleFilter(e, section, option)
-                                      }                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      }     
+                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -504,8 +510,7 @@ useEffect(()=>{
                   <div className="mx-auto max-w-2xl px-4 py-0 sm:px-6 sm:py-0 lg:max-w-7xl lg:px-8">
                     <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
                       {products.map((product) => (
-                        <Link to='/product-detail'>
-                        <div key={product.id} className="group relative border-solid border-2 p-2 border-gray-200">
+                 <Link to="/product-detail" key={product.id}>                        <div key={product.id} className="group relative border-solid border-2 p-2 border-gray-200">
                           <div className="min-h-60 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                             <img
                               src={product.thumbnail}

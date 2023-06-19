@@ -233,21 +233,22 @@ const [filter,setFilter]=useState({})
 
 
 
-
 const handleFilter = (e, section, option) => {
-  //dont use preventdefault hear not reloading hear
-  //
   const newFilter = { ...filter, [section.id]: option.value };
   setFilter(newFilter);
   dispatch(fetchProductsByFiltersAsync(newFilter));
   console.log(section.id, option.value);
 };
 
-useEffect(()=>{
-  dispatch(fetchAllProductsAsync())
-},[dispatch])
+const handleSort = (e, option) => {
+  const newFilter = { ...filter, _sort: option.sort, _order:option.order };
+  setFilter(newFilter);
+  dispatch(fetchProductsByFiltersAsync(newFilter));
+};
 
-
+useEffect(() => {
+  dispatch(fetchAllProductsAsync());
+}, [dispatch]);
 
 
   return (
@@ -335,16 +336,16 @@ useEffect(()=>{
                                     className="flex items-center"
                                   >
                                     <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
-                                      type="checkbox"
-                                      defaultChecked={option.checked}
-                                      onChange={(e) =>
-                                        handleFilter(e, section, option)
-                                      }     
-                                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
+                                  id={`filter-${section.id}-${optionIdx}`}
+                                  name={`${section.id}[]`}
+                                  defaultValue={option.value}
+                                  type="checkbox"
+                                  defaultChecked={option.checked}
+                                  onChange={(e) =>
+                                    handleFilter(e, section, option)
+                                  }
+                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
                                       className="ml-3 min-w-0 flex-1 text-gray-500"
@@ -398,8 +399,8 @@ useEffect(()=>{
                       {sortOptions.map((option) => (
                         <Menu.Item key={option.name}>
                           {({ active }) => (
-                            <a
-                              href={option.href}
+                            <p
+                            onClick={e=>handleSort(e,option,)}
                               className={classNames(
                                 option.current
                                   ? 'font-medium text-gray-900'
@@ -409,7 +410,7 @@ useEffect(()=>{
                               )}
                             >
                               {option.name}
-                            </a>
+                            </p>
                           )}
                         </Menu.Item>
                       ))}
@@ -521,13 +522,13 @@ useEffect(()=>{
                           <div className="mt-4 flex justify-between">
                             <div>
                               <h3 className="text-sm text-gray-700">
-                                <a href={product.thumbnail}>
+                                <div href={product.thumbnail}>
                                   <span
                                     aria-hidden="true"
                                     className="absolute inset-0"
                                   />
                                   {product.title}
-                                </a>
+                                </div>
                               </h3>
                               <p className="mt-1 text-sm text-yellow-500">
                                <StarIcon className='w-6 h-6 inline'></StarIcon>

@@ -200,29 +200,41 @@ export default function ProductList() {
   const dispatch = useDispatch();
   const products = useSelector(selectAllProducts);
   const [filter, setFilter] = useState({});
+  const [sort, setSort] = useState({});
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const handleFilter = (e, section, option) => {
-    const newFilter = { ...filter, [section.id]: option.value };
-   if(e.target.checked){
-   newFilter[section.id]=option.value
-   }else{
-    delete newFilter[section.id]
-   }
+    const newFilter = {...filter};
+    if(e.target.checked){
+      //if any secttion present then push
+      if(newFilter[section.id]){
+        newFilter[section.id].push(option.value)
+      } else{
+        //not create array
+        newFilter[section.id] = [option.value]
+      }
+      //if check false
+    } else{
+       const index = newFilter[section.id].findIndex(el=>el===option.value)
+       newFilter[section.id].splice(index,1);
+    }
+    console.log({newFilter});
+
     setFilter(newFilter);
-    dispatch(fetchProductsByFiltersAsync(newFilter));
-    console.log(section.id, option.value);
   };
 
   const handleSort = (e, option) => {
-    const newFilter = { ...filter, _sort: option.sort, _order: option.order };
-    setFilter(newFilter);
-    dispatch(fetchProductsByFiltersAsync(newFilter));
+    const sort = {  _sort: option.sort, _order: option.order };
+  console.log(sort)
+    setSort(sort);
+    //when you pass argument like this in redux in curly bracket
+    // dispatch(fetchProductsByFiltersAsync({newFilter}));
   };
 
   useEffect(() => {
-    dispatch(fetchProductsByFiltersAsync(filter));
-  }, [dispatch,filter]);
+    dispatch(fetchProductsByFiltersAsync(filter,sort));
+  }, [dispatch,filter,sort]);
 
   return (
     <div className="bg-white">
